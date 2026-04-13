@@ -2,8 +2,6 @@ const Donation = require('../models/Donation');
 const Inventory = require('../models/Inventory');
 const PDFDocument = require('pdfkit');
 
-// ... (previous methods)
-
 // @desc    Download donation certificate
 // @route   GET /api/donations/:id/certificate
 // @access  Private (Donor)
