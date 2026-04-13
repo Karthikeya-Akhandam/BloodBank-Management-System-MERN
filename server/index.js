@@ -5,6 +5,7 @@ const morgan = require('morgan');
 const http = require('http');
 const { Server } = require('socket.io');
 const connectDB = require('./config/db');
+const seedAdmin = require('./utils/seedAdmin');
 const authRoutes = require('./routes/authRoutes');
 const inventoryRoutes = require('./routes/inventoryRoutes');
 const donationRoutes = require('./routes/donationRoutes');
@@ -14,7 +15,9 @@ const bloodRequestRoutes = require('./routes/bloodRequestRoutes');
 dotenv.config();
 
 // Connect to database
-connectDB();
+connectDB().then(() => {
+    seedAdmin();
+});
 
 const app = express();
 const server = http.createServer(app);

@@ -110,7 +110,7 @@ const Register = () => {
                     )}
 
                     <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {(role === 'donor' || role === 'admin') && (
+                        {role === 'donor' && (
                             <div className="space-y-1 col-span-full">
                                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Full Name</label>
                                 <div className="relative">
