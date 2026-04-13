@@ -7,8 +7,9 @@ import OrganizationDashboard from './pages/OrganizationDashboard';
 import HospitalDashboard from './pages/HospitalDashboard';
 import DonorDashboard from './pages/DonorDashboard';
 import AdminDashboard from './pages/AdminDashboard';
+import Home from './pages/Home';
 
-const Unauthorized = () => <div className="p-8 text-center text-red-600 font-bold">Unauthorized Access</div>;
+const Unauthorized = () => <div className="p-8 text-center text-red-600 font-bold text-2xl uppercase italic tracking-tighter">Unauthorized Access</div>;
 
 const DashboardRedirect = () => {
   const { user } = useAuth();
@@ -26,6 +27,7 @@ const DashboardRedirect = () => {
 function App() {
   return (
     <Routes>
+      <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/unauthorized" element={<Unauthorized />} />

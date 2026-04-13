@@ -20,14 +20,18 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173", // Vite default
-        methods: ["GET", "POST", "PUT"]
+        origin: true, // Dynamically allow the requesting origin
+        methods: ["GET", "POST", "PUT"],
+        credentials: true
     }
 });
 
 // Middlewares
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: true,
+    credentials: true
+}));
 app.use(morgan('dev'));
 
 // Socket.io connection
