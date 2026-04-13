@@ -1,21 +1,46 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useAuth } from './context/AuthContext';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import OrganizationDashboard from './pages/OrganizationDashboard';
 
-// Dummy components for now
-const Login = () => <div>Login Page</div>;
-const Register = () => <div>Register Page</div>;
-const Dashboard = () => {
-  const { user, logout } = useAuth();
-  return (
-    <div>
-      <h1>Dashboard - Welcome {user?.name}</h1>
-      <p>Role: {user?.role}</p>
-      <button onClick={logout}>Logout</button>
-    </div>
-  );
+// Dummy components for other roles
+const DonorDashboard = () => (
+  <div className="p-8">
+    <h1 className="text-2xl font-bold">Donor Dashboard</h1>
+    <p>Coming Soon...</p>
+    <button onClick={() => window.location.href = '/login'} className="bg-red-600 text-white p-2 rounded mt-4">Logout</button>
+  </div>
+);
+const HospitalDashboard = () => (
+  <div className="p-8">
+    <h1 className="text-2xl font-bold">Hospital Dashboard</h1>
+    <p>Coming Soon...</p>
+    <button onClick={() => window.location.href = '/login'} className="bg-red-600 text-white p-2 rounded mt-4">Logout</button>
+  </div>
+);
+const AdminDashboard = () => (
+  <div className="p-8">
+    <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+    <p>Coming Soon...</p>
+    <button onClick={() => window.location.href = '/login'} className="bg-red-600 text-white p-2 rounded mt-4">Logout</button>
+  </div>
+);
+const Unauthorized = () => <div className="p-8 text-center text-red-600 font-bold">Unauthorized Access</div>;
+
+const DashboardRedirect = () => {
+  const { user } = useAuth();
+  if (!user) return <Navigate to="/login" replace />;
+  
+  switch (user.role) {
+    case 'admin': return <Navigate to="/admin" replace />;
+    case 'organization': return <Navigate to="/org" replace />;
+    case 'hospital': return <Navigate to="/hospital" replace />;
+    case 'donor': return <Navigate to="/donor" replace />;
+    default: return <Navigate to="/login" replace />;
+  }
 };
-const Unauthorized = () => <div>Unauthorized Access</div>;
 
 function App() {
   return (
@@ -24,29 +49,29 @@ function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
       
-      {/* Protected Routes */}
+      {/* Role-based Redirection */}
       <Route element={<ProtectedRoute />}>
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<DashboardRedirect />} />
       </Route>
 
       {/* Admin Routes */}
       <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
-        <Route path="/admin" element={<div>Admin Dashboard</div>} />
+        <Route path="/admin" element={<AdminDashboard />} />
       </Route>
 
       {/* Organization Routes */}
       <Route element={<ProtectedRoute allowedRoles={['organization']} />}>
-        <Route path="/org" element={<div>Organization Dashboard</div>} />
+        <Route path="/org" element={<OrganizationDashboard />} />
       </Route>
 
       {/* Hospital Routes */}
       <Route element={<ProtectedRoute allowedRoles={['hospital']} />}>
-        <Route path="/hospital" element={<div>Hospital Dashboard</div>} />
+        <Route path="/hospital" element={<HospitalDashboard />} />
       </Route>
 
       {/* Donor Routes */}
       <Route element={<ProtectedRoute allowedRoles={['donor']} />}>
-        <Route path="/donor" element={<div>Donor Dashboard</div>} />
+        <Route path="/donor" element={<DonorDashboard />} />
       </Route>
 
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
