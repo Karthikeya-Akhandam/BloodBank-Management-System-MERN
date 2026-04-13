@@ -4,22 +4,10 @@ import { useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import OrganizationDashboard from './pages/OrganizationDashboard';
+import HospitalDashboard from './pages/HospitalDashboard';
+import DonorDashboard from './pages/DonorDashboard';
 
-// Dummy components for other roles
-const DonorDashboard = () => (
-  <div className="p-8">
-    <h1 className="text-2xl font-bold">Donor Dashboard</h1>
-    <p>Coming Soon...</p>
-    <button onClick={() => window.location.href = '/login'} className="bg-red-600 text-white p-2 rounded mt-4">Logout</button>
-  </div>
-);
-const HospitalDashboard = () => (
-  <div className="p-8">
-    <h1 className="text-2xl font-bold">Hospital Dashboard</h1>
-    <p>Coming Soon...</p>
-    <button onClick={() => window.location.href = '/login'} className="bg-red-600 text-white p-2 rounded mt-4">Logout</button>
-  </div>
-);
+// Dummy component for Admin
 const AdminDashboard = () => (
   <div className="p-8">
     <h1 className="text-2xl font-bold">Admin Dashboard</h1>
