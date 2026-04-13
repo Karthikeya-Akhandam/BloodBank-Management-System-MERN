@@ -8,7 +8,8 @@ export const useSocket = (onEvent?: (event: string, data: any) => void) => {
 
     useEffect(() => {
         if (user) {
-            socketRef.current = io('http://localhost:5000');
+            const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+            socketRef.current = io(socketUrl);
             
             socketRef.current.on('connect', () => {
                 console.log('Connected to socket');
