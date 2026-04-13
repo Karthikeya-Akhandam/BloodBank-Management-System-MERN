@@ -11,6 +11,8 @@ const OrganizationDashboard = () => {
     const [newQuantities, setNewQuantities] = useState<any>({});
     const [donations, setDonations] = useState<any[]>([]);
     const [donationsLoading, setDonationsLoading] = useState(true);
+    const [requests, setRequests] = useState<any[]>([]);
+    const [requestsLoading, setRequestsLoading] = useState(true);
 
     const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
 
@@ -47,9 +49,24 @@ const OrganizationDashboard = () => {
         }
     };
 
+    const fetchRequests = async () => {
+        setRequestsLoading(true);
+        try {
+            const { data } = await api.get('/requests/org');
+            if (data.success) {
+                setRequests(data.data);
+            }
+        } catch (error) {
+            console.error('Failed to fetch requests', error);
+        } finally {
+            setRequestsLoading(false);
+        }
+    };
+
     useEffect(() => {
         fetchInventory();
         fetchDonations();
+        fetchRequests();
     }, []);
 
     const handleUpdate = async (bloodGroup: string) => {
@@ -74,10 +91,22 @@ const OrganizationDashboard = () => {
             const { data } = await api.put(`/donations/${id}/status`, { status });
             if (data.success) {
                 fetchDonations();
-                fetchInventory(); // Refresh inventory if fulfilled
+                fetchInventory();
             }
         } catch (error) {
             console.error('Failed to update donation status', error);
+        }
+    };
+
+    const handleRequestStatus = async (id: string, status: string) => {
+        try {
+            const { data } = await api.put(`/requests/${id}/status`, { status });
+            if (data.success) {
+                fetchRequests();
+                fetchInventory();
+            }
+        } catch (error: any) {
+            alert(error.response?.data?.message || 'Failed to update request status');
         }
     };
 
@@ -185,6 +214,70 @@ const OrganizationDashboard = () => {
                                 {donations.length === 0 && (
                                     <tr>
                                         <td colSpan={5} className="p-8 text-center text-gray-500 italic">No donation bookings found</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div className="bg-white rounded-xl shadow-md overflow-hidden mt-12">
+                    <div className="p-6 border-b border-gray-100 flex justify-between items-center">
+                        <h2 className="text-2xl font-bold text-gray-800">Hospital Blood Requests</h2>
+                        <button onClick={fetchRequests} className="text-red-600 hover:text-red-700">
+                            <RefreshCw size={18} />
+                        </button>
+                    </div>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left">
+                            <thead className="bg-gray-50 text-gray-600 uppercase text-sm">
+                                <tr>
+                                    <th className="p-4">Hospital Name</th>
+                                    <th className="p-4">Blood Group</th>
+                                    <th className="p-4">Quantity</th>
+                                    <th className="p-4">Status</th>
+                                    <th className="p-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100">
+                                {requests.map((r) => (
+                                    <tr key={r._id} className="hover:bg-gray-50">
+                                        <td className="p-4">
+                                            <div className="font-medium text-gray-800">{r.hospital?.hospitalName}</div>
+                                            {r.status === 'accepted' && (
+                                                <div className="text-xs text-gray-500">{r.hospital?.phone} | {r.hospital?.email}</div>
+                                            )}
+                                        </td>
+                                        <td className="p-4">
+                                            <span className="bg-blue-100 text-blue-600 px-2 py-1 rounded text-xs font-bold">{r.bloodGroup}</span>
+                                        </td>
+                                        <td className="p-4 text-sm text-gray-600 font-bold">
+                                            {r.quantity} units
+                                        </td>
+                                        <td className="p-4">
+                                            <span className={`px-2 py-1 rounded-full text-xs font-medium uppercase ${
+                                                r.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                                r.status === 'accepted' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                                            }`}>
+                                                {r.status}
+                                            </span>
+                                        </td>
+                                        <td className="p-4">
+                                            {r.status === 'pending' && (
+                                                <div className="flex gap-2">
+                                                    <button onClick={() => handleRequestStatus(r._id, 'accepted')} className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition">Accept & Send</button>
+                                                    <button onClick={() => handleRequestStatus(r._id, 'rejected')} className="text-red-600 hover:underline text-sm font-medium">Reject</button>
+                                                </div>
+                                            )}
+                                            {r.status !== 'pending' && (
+                                                <span className="text-gray-400 text-sm italic">Processed</span>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                                {requests.length === 0 && (
+                                    <tr>
+                                        <td colSpan={5} className="p-8 text-center text-gray-500 italic">No blood requests found</td>
                                     </tr>
                                 )}
                             </tbody>

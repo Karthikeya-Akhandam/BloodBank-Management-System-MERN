@@ -6,6 +6,7 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const inventoryRoutes = require('./routes/inventoryRoutes');
 const donationRoutes = require('./routes/donationRoutes');
+const bloodRequestRoutes = require('./routes/bloodRequestRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -24,6 +25,7 @@ app.use(morgan('dev'));
 app.use('/api/auth', authRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/donations', donationRoutes);
+app.use('/api/requests', bloodRequestRoutes);
 
 app.get('/', (req, res) => {
   res.send('Blood Bank API is running...');
