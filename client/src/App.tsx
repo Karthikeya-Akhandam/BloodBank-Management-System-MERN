@@ -6,15 +6,8 @@ import Register from './pages/Register';
 import OrganizationDashboard from './pages/OrganizationDashboard';
 import HospitalDashboard from './pages/HospitalDashboard';
 import DonorDashboard from './pages/DonorDashboard';
+import AdminDashboard from './pages/AdminDashboard';
 
-// Dummy component for Admin
-const AdminDashboard = () => (
-  <div className="p-8">
-    <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-    <p>Coming Soon...</p>
-    <button onClick={() => window.location.href = '/login'} className="bg-red-600 text-white p-2 rounded mt-4">Logout</button>
-  </div>
-);
 const Unauthorized = () => <div className="p-8 text-center text-red-600 font-bold">Unauthorized Access</div>;
 
 const DashboardRedirect = () => {

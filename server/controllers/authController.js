@@ -92,3 +92,15 @@ exports.getProfile = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
+
+// @desc    Get all users
+// @route   GET /api/auth/users
+// @access  Private (Admin)
+exports.getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find();
+        res.json({ success: true, data: users });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
