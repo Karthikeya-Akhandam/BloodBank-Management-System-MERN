@@ -16,6 +16,10 @@ exports.bookSlot = async (req, res) => {
             time
         });
 
+        // Emit notification to organization
+        const io = req.app.get('socketio');
+        io.to(organization).emit('new-donation', { donation, donorName: req.user.name });
+
         res.status(201).json({ success: true, data: donation });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -71,6 +75,10 @@ exports.updateDonationStatus = async (req, res) => {
 
         donation.status = status;
         await donation.save();
+
+        // Emit notification to donor
+        const io = req.app.get('socketio');
+        io.to(donation.donor.toString()).emit('donation-status-update', { donation });
 
         // If status is fulfilled, increase inventory
         if (status === 'fulfilled') {

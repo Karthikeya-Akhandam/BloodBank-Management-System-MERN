@@ -15,6 +15,10 @@ exports.createRequest = async (req, res) => {
             quantity
         });
 
+        // Emit notification to organization
+        const io = req.app.get('socketio');
+        io.to(organization).emit('new-request', { request, hospitalName: req.user.hospitalName });
+
         res.status(201).json({ success: true, data: request });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -81,6 +85,10 @@ exports.updateRequestStatus = async (req, res) => {
 
         request.status = status;
         await request.save();
+
+        // Emit notification to hospital
+        const io = req.app.get('socketio');
+        io.to(request.hospital.toString()).emit('request-status-update', { request });
 
         res.json({ success: true, data: request });
     } catch (error) {
