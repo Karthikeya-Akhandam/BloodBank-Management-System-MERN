@@ -52,10 +52,11 @@ const Register = () => {
                             <option value="donor">Donor</option>
                             <option value="organization">Blood Bank (Organization)</option>
                             <option value="hospital">Hospital</option>
+                            <option value="admin">Admin</option>
                         </select>
                     </div>
 
-                    {role === 'donor' && (
+                    {(role === 'donor' || role === 'admin') && (
                         <div className="mb-2">
                             <label className="block text-gray-700 mb-2">Name</label>
                             <input type="text" className="w-full p-2 border rounded" value={name} onChange={(e) => setName(e.target.value)} required />

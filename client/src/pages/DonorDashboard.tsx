@@ -77,6 +77,23 @@ const DonorDashboard = () => {
         }
     };
 
+    const handleDownloadCertificate = async (donationId: string) => {
+        try {
+            const response = await api.get(`/donations/${donationId}/certificate`, {
+                responseType: 'blob'
+            });
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `certificate_${donationId}.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } catch (error) {
+            console.error('Failed to download certificate', error);
+        }
+    };
+
     const filteredOrgs = organizations.filter(inv => 
         inv.organization.organizationName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         inv.organization.address.toLowerCase().includes(searchTerm.toLowerCase())
@@ -174,7 +191,10 @@ const DonorDashboard = () => {
                                     <div className="text-xs text-gray-500 mb-1">{new Date(d.date).toLocaleDateString()} at {d.time}</div>
                                     <div className="text-xs font-bold text-red-600">Blood Group: {d.bloodGroup}</div>
                                     {d.status === 'fulfilled' && (
-                                        <button className="mt-3 w-full text-xs bg-red-600 text-white py-1.5 rounded hover:bg-red-700 transition">
+                                        <button 
+                                            onClick={() => handleDownloadCertificate(d._id)}
+                                            className="mt-3 w-full text-xs bg-red-600 text-white py-1.5 rounded hover:bg-red-700 transition"
+                                        >
                                             Download Certificate
                                         </button>
                                     )}
