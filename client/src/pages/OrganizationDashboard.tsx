@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import { LogOut, RefreshCw, Save } from 'lucide-react';
+import { useSocket } from '../hooks/useSocket';
+import { LogOut, RefreshCw, Save, Bell } from 'lucide-react';
 
 const OrganizationDashboard = () => {
-    const { logout } = useAuth();
+    const { logout, user } = useAuth();
     const [inventory, setInventory] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [updating, setUpdating] = useState<string | null>(null);
@@ -13,6 +14,17 @@ const OrganizationDashboard = () => {
     const [donationsLoading, setDonationsLoading] = useState(true);
     const [requests, setRequests] = useState<any[]>([]);
     const [requestsLoading, setRequestsLoading] = useState(true);
+    const [notifications, setNotifications] = useState<string[]>([]);
+
+    useSocket((event, data) => {
+        if (event === 'new-donation') {
+            setNotifications(prev => [`New donation booking from ${data.donorName}!`, ...prev]);
+            fetchDonations();
+        } else if (event === 'new-request') {
+            setNotifications(prev => [`New blood request from ${data.hospitalName}!`, ...prev]);
+            fetchRequests();
+        }
+    });
 
     const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
 
@@ -116,9 +128,26 @@ const OrganizationDashboard = () => {
         <div className="min-h-screen bg-gray-50">
             <nav className="bg-red-600 text-white p-4 flex justify-between items-center shadow-lg">
                 <h1 className="text-xl font-bold">Blood Bank Organization Dashboard</h1>
-                <button onClick={logout} className="flex items-center gap-2 bg-red-700 hover:bg-red-800 p-2 rounded transition">
-                    <LogOut size={18} /> Logout
-                </button>
+                <div className="flex items-center gap-4">
+                    {notifications.length > 0 && (
+                        <div className="relative group">
+                            <Bell className="cursor-pointer" size={24} />
+                            <span className="absolute -top-1 -right-1 bg-white text-red-600 text-[10px] font-bold px-1 rounded-full">{notifications.length}</span>
+                            <div className="absolute right-0 mt-2 w-64 bg-white text-gray-800 shadow-xl rounded-lg hidden group-hover:block z-50 p-2 border">
+                                <h4 className="font-bold border-b pb-1 mb-2">Notifications</h4>
+                                <div className="max-h-48 overflow-y-auto space-y-2">
+                                    {notifications.map((n, i) => (
+                                        <div key={i} className="text-xs bg-gray-50 p-2 rounded">{n}</div>
+                                    ))}
+                                </div>
+                                <button onClick={() => setNotifications([])} className="w-full text-center text-red-600 text-xs mt-2 hover:underline">Clear all</button>
+                            </div>
+                        </div>
+                    )}
+                    <button onClick={logout} className="flex items-center gap-2 bg-red-700 hover:bg-red-800 p-2 rounded transition">
+                        <LogOut size={18} /> Logout
+                    </button>
+                </div>
             </nav>
 
             <main className="p-8 max-w-6xl mx-auto">
