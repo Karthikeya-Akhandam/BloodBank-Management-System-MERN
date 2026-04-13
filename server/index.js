@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
+const authRoutes = require('./routes/authRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -17,7 +18,9 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan('dev'));
 
-// Routes (to be added)
+// Routes
+app.use('/api/auth', authRoutes);
+
 app.get('/', (req, res) => {
   res.send('Blood Bank API is running...');
 });
